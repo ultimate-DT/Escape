@@ -1,3 +1,4 @@
+/*明日やります(commit test)*/
 package escape_game;
 
 import java.awt.Image;
