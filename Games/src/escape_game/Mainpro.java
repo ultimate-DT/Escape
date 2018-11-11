@@ -123,6 +123,10 @@ public class Mainpro extends Applet implements KeyListener, MouseListener, Mouse
 	Image icon_tunakan = null;
 	//jsr2
 	Image icon_tutu = null;
+	Image icon_yukasita_key = null;
+	//wc
+	Image icon_datuijo_key = null;
+	Image icon_triangle_hint = null;
 	//その他
 	Image title_gazo = null;//title用画像
 	BufferedReader save_data = null;
@@ -179,6 +183,10 @@ public class Mainpro extends Applet implements KeyListener, MouseListener, Mouse
 			icon_tunakan = getImage(getCodeBase(),"../material_data/escape_game/itemicon/ICON_tunakan.png");
 			//jsr2
 			icon_tutu = getImage(getCodeBase(), "../material_data/escape_game/itemicon/ICON_tutu.png");
+			icon_yukasita_key = getImage(getCodeBase(), "../material_data/escape_game/itemicon/ICON_yukasita_key.png");
+			//wc
+			icon_datuijo_key = getImage(getCodeBase(), "../material_data/escape_game/itemicon/ICON_datuijo_key.png");
+			icon_triangle_hint = getImage(getCodeBase(), "../material_data/escape_game/itemicon/ICON_triangle_hint.png");
 			//その他
 			title_gazo = getImage(getCodeBase(),"../material_data/escape_game/other/title_gazo.png");
 		}
@@ -200,6 +208,10 @@ public class Mainpro extends Applet implements KeyListener, MouseListener, Mouse
 		name_to_icon.put("ツナ缶", icon_tunakan);
 		//japanese-style-room2
 		name_to_icon.put("筒", icon_tutu);
+		name_to_icon.put(IconName.YUKASITA_KEY, icon_yukasita_key);
+		//wc
+		name_to_icon.put(IconName.DK_DATUIJO_KEY, icon_datuijo_key);
+		name_to_icon.put(IconName.TRIANGLE_HINT, icon_triangle_hint);
 		//ここまで要素の追加
 		back = createImage(screen_size_x+2000,screen_size_y+1000);
 		buffer = back.getGraphics();
@@ -640,6 +652,9 @@ public class Mainpro extends Applet implements KeyListener, MouseListener, Mouse
 					if (e.getSource() == button_use_item[bIndex]) {
 						//itemのindex
 						int bag_index = bIndex + (show_bag_page - 1) * button_use_item.length;
+						if (isItemStatusChanged(bag_index)) {
+							break;
+						}
 						examine(bag.get(bag_index));
 						clear_show_window();
 						is_show_bag = false;
@@ -781,7 +796,7 @@ public class Mainpro extends Applet implements KeyListener, MouseListener, Mouse
 									player_x = 190;
 									player_y = 80;
 
-								} else if (50 <= player_x && player_x <= 90 && 320 <= player_y && now_field == wc) {
+								} else if (now_field == wc && now_field.here(player_x, player_y).equals(WC.DOOR_TO_DK)) {
 									/* WC -> DkTop */
 									now_field = dkTop;
 									screenMode = "DkTop";
@@ -958,7 +973,7 @@ public class Mainpro extends Applet implements KeyListener, MouseListener, Mouse
 									now_field = wc;
 									screenMode = "WC";
 									now_field.setImages(getCodeBase());
-									player_x = 60;
+									player_x = 50;
 									player_y = 300;
 								} else if (280 <= player_x && player_x <= 320 && player_y <= 20
 										&& now_field == japaneseStyleRoom1) {
@@ -1138,6 +1153,9 @@ public class Mainpro extends Applet implements KeyListener, MouseListener, Mouse
 				if (is_show_bag) {
 					int bag_index = 0 + (show_bag_page - 1) * button_use_item.length;
 					if (bag_index <= bag.size() - 1) {//対象のindexにアイテムが存在しているとき
+						if (isItemStatusChanged(bag_index)) {
+							break;
+						}
 						examine(bag.get(bag_index));
 						clear_show_window();
 						is_show_bag = false;
@@ -1148,6 +1166,9 @@ public class Mainpro extends Applet implements KeyListener, MouseListener, Mouse
 				if (is_show_bag) {
 					int bag_index = 1 + (show_bag_page - 1) * button_use_item.length;
 					if (bag_index <= bag.size() - 1) {//対象のindexにアイテムが存在しているとき
+						if (isItemStatusChanged(bag_index)) {
+							break;
+						}
 						examine(bag.get(bag_index));
 						clear_show_window();
 						is_show_bag = false;
@@ -1158,6 +1179,9 @@ public class Mainpro extends Applet implements KeyListener, MouseListener, Mouse
 				if (is_show_bag) {
 					int bag_index = 2 + (show_bag_page - 1) * button_use_item.length;
 					if (bag_index <= bag.size() - 1) {//対象のindexにアイテムが存在しているとき
+						if (isItemStatusChanged(bag_index)) {
+							break;
+						}
 						examine(bag.get(bag_index));
 						clear_show_window();
 						is_show_bag = false;
@@ -1168,6 +1192,9 @@ public class Mainpro extends Applet implements KeyListener, MouseListener, Mouse
 				if (is_show_bag) {
 					int bag_index = 3 + (show_bag_page - 1) * button_use_item.length;
 					if (bag_index <= bag.size() - 1) {//対象のindexにアイテムが存在しているとき
+						if (isItemStatusChanged(bag_index)) {
+							break;
+						}
 						examine(bag.get(bag_index));
 						clear_show_window();
 						is_show_bag = false;
@@ -1178,6 +1205,9 @@ public class Mainpro extends Applet implements KeyListener, MouseListener, Mouse
 				if (is_show_bag) {
 					int bag_index = 4 + (show_bag_page - 1) * button_use_item.length;
 					if (bag_index <= bag.size() - 1) {//対象のindexにアイテムが存在しているとき
+						if (isItemStatusChanged(bag_index)) {
+							break;
+						}
 						examine(bag.get(bag_index));
 						clear_show_window();
 						is_show_bag = false;
@@ -1274,6 +1304,23 @@ public class Mainpro extends Applet implements KeyListener, MouseListener, Mouse
 			message.set(last_index, e1);
 			message.add("nothing");
 		}
+	}
+
+	//アイテム使用によって、ほかのアイテムに影響が及ぶ場合はその処理を行いtrueを返す
+	boolean isItemStatusChanged(int index) {
+		if (bag.get(index).equals(IconName.CUTTER)) {
+			for (int targetItemIndex = 0; targetItemIndex < bag.size(); targetItemIndex++) {
+				if (bag.get(targetItemIndex).equals(IconName.TUTU)) {
+					message_add("カッターで筒を切ってみよう");
+					message_add("お、中から鍵が出てきたぞ！！");
+					message_add("(鍵を手に入れた！！)");
+					bag.add(IconName.YUKASITA_KEY);
+					bag.remove(targetItemIndex);
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -1378,6 +1425,8 @@ public class Mainpro extends Applet implements KeyListener, MouseListener, Mouse
 			return japaneseStyleRoom2;
 		else if (fieldName.equals("Datuijo"))
 			return datuijo;
+		else if (fieldName.equals("WC"))
+			return wc;
 		else
 			return null;
 	}
