@@ -124,17 +124,18 @@ public class Dk extends Field {
 			} else if(examine_point.equals("sink") && tap) {
 				mainpro.message_add("蛇口が外れた水道だ");
 				mainpro.message_add("水を出せないから意味がない");
-			} else if(examine_point.equals("table") && key_yukasita && !key_wc_10yen && !hint) {
+			} else if(examine_point.equals("table") && !key_yukasita && item.equals(IconName.YUKASITA_KEY) && !key_wc_10yen && !hint) {
 				mainpro.message_add("よいしょっと・・・");
 				mainpro.message_add("10円玉とー、なんだこれ？");
 				mainpro.message_add("(10円玉を手に入れた!)");
 				mainpro.message_add("(ヒント1を手に入れた!)");
 				key_wc_10yen = true;
 				hint = true;
+				key_yukasita = true;
 				mainpro.bag.add("十円玉");
 				mainpro.bag.add("何かのヒント");
 			} else if(examine_point.equals("table") && key_yukasita && key_wc_10yen) {
-				mainpro.message_add("もう何もない");				
+				mainpro.message_add("もう何もない");
 			} else if(examine_point.equals("table") && !key_yukasita) {
 				mainpro.message_add("床下収納がある!");
 				mainpro.message_add("けど鍵が掛かっているのか。開かない");
@@ -241,15 +242,18 @@ class DkTop extends Field{
 	Image dk_door_wc;
 	
 	Mainpro mainpro;
-	
+
+	private boolean isWCDoorOpen = false;
+	private boolean isDatuijoDoorOpen = false;
+
 	DkTop(Mainpro mainpro) {
 		this.mainpro = mainpro;
 	}
 	
 	boolean is_character_in(int cx, int cy) {
 		String here = here(cx, cy);
-		if(here.equals("inside") || here.equals("DkTop->datuijo")
-			|| here.equals("DkTop->Entrance") || here.equals("DkTop->W.C")) {
+		if(here.equals("inside") || (here.equals("DkTop->datuijo") && isDatuijoDoorOpen)
+			|| here.equals("DkTop->Entrance") || (here.equals("DkTop->W.C") && isWCDoorOpen)) {
 			return true;
 		}
 		return false;
@@ -283,6 +287,27 @@ class DkTop extends Field{
 		if(mainpro.entrance.getIsCheckDoor()) {
 			if(examine_point.equals("renji")) {
 				mainpro.message_add("何もない");
+			} else if (examine_point.equals("DkTop->W.C")) {
+				if (isWCDoorOpen) {
+					mainpro.message_add("ドアは開いている");
+				} else if (!isWCDoorOpen && item.equals(IconName.JUENDAMA)) {
+					mainpro.message_add("家のトイレの鍵は簡単に開くんだよな");
+					mainpro.message_add("よっしゃ、開いたぜ！");
+					isWCDoorOpen = true;
+				} else {
+					mainpro.message_add("このドアは鍵がかかっているようだ");
+					mainpro.message_add("しかし鍵穴はほかのドアのと比べると簡素なものだな");
+				}
+			} else if (examine_point.equals("DkTop->datuijo")) {
+				if (isDatuijoDoorOpen) {
+					mainpro.message_add("ドアは開いている");
+				} else if (!isDatuijoDoorOpen && item.equals(IconName.DK_DATUIJO_KEY)) {
+					mainpro.message_add("この鍵でここのドアは開かないかなぁ...");
+					mainpro.message_add("開くじゃん、やったぜ！！！");
+					isDatuijoDoorOpen = true;
+				} else {
+					mainpro.message_add("恒例のごとく、鍵がかかっている");
+				}
 			}
 		} 
 	}
@@ -307,8 +332,12 @@ class DkTop extends Field{
 	@Override
 	void showMap(ImageObserver mapr) {
 		mainpro.buffer.drawImage(dk_base_top, 0, 0, mainpro.screen_size_x, mainpro.screen_size_y-100, mapr);
-		mainpro.buffer.drawImage(dk_door_dressing_room, 0, 0, mainpro.screen_size_x, mainpro.screen_size_y-100, mainpro);
-		mainpro.buffer.drawImage(dk_door_wc, 0, 0, mainpro.screen_size_x, mainpro.screen_size_y-100, mainpro);
+		if (!isDatuijoDoorOpen) {
+			mainpro.buffer.drawImage(dk_door_dressing_room, 0, 0, mainpro.screen_size_x, mainpro.screen_size_y-100, mainpro);
+		}
+		if (!isWCDoorOpen) {
+			mainpro.buffer.drawImage(dk_door_wc, 0, 0, mainpro.screen_size_x, mainpro.screen_size_y-100, mainpro);
+		}
 	}
 
 	@Override
