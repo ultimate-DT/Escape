@@ -38,6 +38,7 @@ public class Mainpro extends Applet implements KeyListener, MouseListener, Mouse
 	 * japaneseStyleRoom2:和室2
 	 * datuijo:脱衣所
 	 * WC:トイレ
+     * Bathroom:浴室
 	 */
 	ArrayList<String> bag = new ArrayList<String>();
 	int screen_size_x = 500;

@@ -6,14 +6,21 @@ import java.net.URL;
 
 public class Bathroom extends Field{
 
-	Image bathroom1;
-	Image bathroom2;
-	Image bathroom3;
-	Image timer;
-	
-	boolean latt; //timerを見ている
-	
-	Mainpro mainpro;
+	private Image bathroom = null;
+	private Image timer = null;
+
+	private boolean latt = false; //timerを見ている
+
+	private Mainpro mainpro = null;
+
+	//もの
+	public static final String DOOR_TO_Datuijo = "door_to_datuijo";
+	public static final String Bathtub = "bathtub";
+	public static final String BATH_CHAIR = "bath_chair";
+	public static final String TIMER = "timer";
+	//場所
+	public static final String WALL = "wall";
+	public static final String INSIDE = "inside";
 	
 	public Bathroom(Mainpro mainpro) {
 		this.mainpro = mainpro;
@@ -33,7 +40,7 @@ public class Bathroom extends Field{
 	@Override
 	String here(int cx, int cy) {
 		// TODO 自動生成されたメソッド・スタブ
-		return null;
+		return INSIDE;
 	}
 
 	@Override
@@ -68,20 +75,19 @@ public class Bathroom extends Field{
 
 	@Override
 	void showMap(ImageObserver field) {
-		// TODO 自動生成されたメソッド・スタブ
+		mainpro.buffer.drawImage(bathroom, 0, 0, mainpro.screen_size_x, mainpro.screen_size_y-100, field);
 		
 	}
 
 	@Override
 	void setImages(URL codeBase) {
-		// TODO 自動生成されたメソッド・スタブ
+		bathroom = mainpro.getImage(codeBase, "../material_data/escape_game/bathroom/bathroom.png");
 		
 	}
 
 	@Override
 	public String toString() {
-		// TODO 自動生成されたメソッド・スタブ
-		return null;
+		return "Bathroom";
 	}
 
 	@Override

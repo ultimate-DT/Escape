@@ -361,7 +361,13 @@ class DkTop extends Field{
 
 	@Override
 	void setFlagTrue(String flagString) {
-		System.out.println("次のフラグ名に対応するフラグはありませんでした:"+flagString);
+		if (flagString.equals("isWCDoorOpen")) {
+			isWCDoorOpen = true;
+		} else if (flagString.equals("isDatuijoDoorOpen")) {
+			isDatuijoDoorOpen = true;
+		} else {
+			System.out.println("次のフラグ名に対応するフラグはありませんでした:"+flagString);
+		}
 	}
 	
 }
